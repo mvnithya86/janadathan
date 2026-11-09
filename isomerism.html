@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isomerism Mastery - 50 Question Quiz</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --error: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 25px 0;
+        }
+
+        .option-item {
+            background: #f8fafc;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 15px;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .option-item.selected {
+            border-color: var(--primary);
+            background: #eef2ff;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .option-item.correct {
+            border-color: var(--success);
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .option-item.incorrect {
+            border-color: var(--error);
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        button:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+        }
+
+        .results-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #eef2ff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0 auto 20px auto;
+            border: 4px solid var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-screen">
+        <h1>Isomerism Master Quiz</h1>
+        <div class="subtitle">Cambridge International Chemistry Revision (50 Questions)</div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress-bar"></div>
+        </div>
+
+        <div class="question-header">
+            <span id="question-number">Question 1 of 50</span>
+            <span id="score-tracker">Score: 0</span>
+        </div>
+
+        <div class="question-text" id="question-text">Loading question...</div>
+
+        <ul class="options-list" id="options-list">
+            <!-- Options injected by JS -->
+        </ul>
+
+        <div class="btn-container">
+            <button id="next-btn" onclick="handleNext()" disabled>Next Question</button>
+        </div>
+    </div>
+
+    <div class="results-screen" id="results-screen">
+        <h1>Quiz Completed! 🎉</h1>
+        <p class="subtitle">Here is how you performed on the Isomerism assessment:</p>
+        <div class="score-circle" id="final-score">0/50</div>
+        <p id="performance-msg" style="font-size: 16px; margin-bottom: 25px; font-weight: 500;"></p>
+        <button onclick="restartQuiz()">Retake Quiz</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        // Structural Isomerism - General
+        {
+            q: "What does a compound's molecular formula tell us?",
+            options: [
+                "The number and type of each atom in one molecule",
+                "Only the spatial arrangement of atoms",
+                "The exact 3D angles between bonds",
+                "The boiling point and physical properties"
+            ],
+            answer: 0
+        },
+        {
+            q: "What is the molecular formula of propene as shown in Figure 14.16?",
+            options: ["C2H4", "C3H6", "C4H8", "C3H8"],
+            answer: 1
+        },
+        {
+            q: "How many carbon atoms are present in a propene molecule (C3H6)?",
+            options: ["2", "3", "4", "5"],
+            answer: 1
+        },
+        {
+            q: "How many hydrogen atoms are present in a propene molecule (C3H6)?",
+            options: ["4", "5", "6", "8"],
+            answer: 2
+        },
+        {
+            q: "What term describes compounds that have the same molecular formula but different structural formulae?",
+            options: [
+                "Isotopes",
+                "Allotropes",
+                "Structural isomers",
+                "Homologues"
+            ],
+            answer: 2
+        },
+        {
+            q: "Which cyclic alkane is a structural isomer of propene (C3H6)?",
+            options: ["Cyclobutane", "Cyclopropane", "Cyclopentane", "Propane"],
+            answer: 1
+        },
+        {
+            q: "What is the structural formula abbreviation of cyclopropane?",
+            options: ["(CH2)3", "(CH3)3", "CH3CH2CH3", "CH2=CHCH3"],
+            answer: 0
+        },
+        {
+            q: "How many primary types of structural isomerism are listed in the textbook?",
+            options: ["Two", "Three", "Four", "Five"],
+            answer: 1
+        },
+        {
+            q: "Which of the following is NOT one of the three types of structural isomerism?",
+            options: [
+                "Position isomerism",
+                "Functional group isomerism",
+                "Geometrical isomerism",
+                "Chain isomerism"
+            ],
+            answer: 2
+        },
+        {
+            q: "In structural isomerism, do the compounds have the same molecular formula?",
+            options: [
+                "No, they have different molecular formulae",
+                "Yes, they share the same molecular formula",
+                "Only if they are cyclic compounds",
+                "Only if they contain halogens"
+            ],
+            answer: 1
+        },
+
+        // Position Isomerism
+        {
+            q: "In position isomerism, what varies in each isomer?",
+            options: [
+                "The carbon chain length",
+                "The location of the functional group",
+                "The number of double bonds",
+                "The optical rotation direction"
+            ],
+            answer: 1
+        },
+        {
+            q: "What molecular formula is used in the textbook to illustrate position isomerism with bromine atoms?",
+            options: ["C3H7Br", "C3H6Br2", "C3H8Br2", "C2H4Br2"],
+            answer: 1
+        },
+        {
+            q: "How many possible isomers are shown for C3H6Br2 in Figure 14.18?",
+            options: ["Two", "Three", "Four", "Five"],
+            answer: 2
+        },
+        {
+            q: "What phenomenon allows different drawings of 1,2-dibromopropane to represent the exact same molecule?",
+            options: [
+                "Resonance stabilization",
+                "Free rotation about C-C single bonds",
+                "Hydrogen bonding",
+                "Optical inversion"
+            ],
+            answer: 1
+        },
+        {
+            q: "Why must you take care when drawing structural isomers of 1,2-dibromopropane?",
+            options: [
+                "To avoid repeating the same structure due to single bond rotation",
+                "To ensure correct molecular weight",
+                "Because pi bonds restrict rotation",
+                "To prevent carbon free radical formation"
+            ],
+            answer: 0
+        },
+        {
+            q: "In Figure 14.19, all three depicted molecules are actually which specific compound?",
+            options: [
+                "1,1-dibromopropane",
+                "1,2-dibromopropane",
+                "1,3-dibromopropane",
+                "2,2-dibromopropane"
+            ],
+            answer: 1
+        },
+        {
+            q: "Can single bonds in alkanes rotate freely?",
+            options: [
+                "No, rotation is completely restricted",
+                "Yes, there is free rotation about C-C single bonds",
+                "Only at temperatures above 500°C",
+                "Only in cyclic structures"
+            ],
+            answer: 1
+        },
+        {
+            q: "Position isomerism is classified under which broader category of isomerism?",
+            options: [
+                "Stereoisomerism",
+                "Structural isomerism",
+                "Geometrical isomerism",
+                "Optical isomerism"
+            ],
+            answer: 1
+        },
+        {
+            q: "If the position of a chlorine substituent changes along a carbon chain, what kind of isomers are formed?",
+            options: [
+                "Chain isomers",
+                "Position isomers",
+                "Functional group isomers",
+                "Enantiomers"
+            ],
+            answer: 1
+        },
+        {
+            q: "In position isomerism, do the carbon skeleton and functional group type remain the same?",
+            options: [
+                "Yes, only the position changes",
+                "No, the functional group changes entirely",
+                "No, the carbon skeleton changes",
+                "Neither remains the same"
+            ],
+            answer: 0
+        },
+
+        // Functional Group Isomerism
+        {
+            q: "What characterizes functional group isomerism?",
+            options: [
+                "Different positions of the same functional group",
+                "Different functional groups present in the isomers",
+                "Different lengths of straight carbon chains",
+                "Different chiral centers"
+            ],
+            answer: 1
+        },
+        {
+            q: "What molecular formula is used in Figure 14.20 to illustrate functional group isomerism?",
+            options: ["C3H8O", "C3H6O", "C4H10O", "C2H6O"],
+            answer: 0
+        },
+        {
+            q: "Which two functional group isomers are formed by C3H8O?",
+            options: [
+                "An aldehyde and a ketone",
+                "An alcohol and an ether",
+                "A carboxylic acid and an ester",
+                "An alkene and a cycloalkane"
+            ],
+            answer: 1
+        },
+        {
+            q: "What is the name of the alcohol isomer of C3H8O shown in Figure 14.20?",
+            options: ["Propan-2-ol", "Propan-1-ol", "Methoxyethane", "Ethanol"],
+            answer: 1
+        },
+        {
+            q: "What is the name of the ether isomer of C3H8O shown in Figure 14.20?",
+            options: ["Propan-1-ol", "Ethoxyethane", "Methoxyethane", "Propan-2-ol"],
+            answer: 2
+        },
+        {
+            q: "Do functional group isomers share similar chemical properties?",
+            options: [
+                "Yes, they have identical chemical properties",
+                "No, they have very different chemical properties",
+                "Only if they are alcohols",
+                "Only in aqueous solution"
+            ],
+            answer: 1
+        },
+        {
+            q: "Which functional group is present in propan-1-ol?",
+            options: ["-OH (hydroxyl)", "-O- (ether linkage)", "-CHO (aldehyde)", "-COOH"],
+            answer: 0
+        },
+        {
+            q: "Which functional group is present in methoxyethane?",
+            options: ["-OH", "-O- (ether bridge)", "-CO-", "-COOH"],
+            answer: 1
+        },
+        {
+            q: "Functional group isomerism belongs to which branch of isomerism?",
+            options: [
+                "Stereoisomerism",
+                "Structural isomerism",
+                "Optical isomerism",
+                "Geometrical isomerism"
+            ],
+            answer: 1
+        },
+        {
+            q: "Question 5c in the text asks for functional group isomers of C3H6O that are an aldehyde and a...?",
+            options: ["Ketone", "Carboxylic acid", "Alcohol", "Ester"],
+            answer: 0
+        },
+
+        // Chain Isomerism
+        {
+            q: "How do chain isomers differ in their structure?",
+            options: [
+                "In their functional group position",
+                "In the structure of their carbon 'skeleton'",
+                "In having a double bond instead of a single bond",
+                "In optical rotation"
+            ],
+            answer: 1
+        },
+        {
+            q: "What molecular formula is given in Figure 14.21 for butane and methylpropane?",
+            options: ["C3H8", "C4H10", "C5H12", "C6H14"],
+            answer: 1
+        },
+        {
+            q: "Which of the following is a chain isomer of butane?",
+            options: ["Propane", "Pentane", "Methylpropane", "Cyclobutane"],
+            answer: 2
+        },
+        {
+            q: "What is the structural formula of butane shown in Figure 14.21?",
+            options: ["CH3CH2CH2CH3", "CH3CH(CH3)CH3", "(CH3)4C", "CH3CH2CH3"],
+            answer: 0
+        },
+        {
+            q: "What is the structural formula of methylpropane shown in Figure 14.21?",
+            options: ["CH3CH2CH2CH3", "CH3CH(CH3)CH3", "CH3CH2CH2CH2CH3", "CH3CH2CH3"],
+            answer: 1
+        },
+        {
+            q: "Chain isomerism is a sub-type of which major category?",
+            options: ["Stereoisomerism", "Structural isomerism", "Geometrical isomerism", "Optical isomerism"],
+            answer: 1
+        },
+        {
+            q: "Do butane and methylpropane have the same molecular formula?",
+            options: ["Yes, C4H10", "No, one is C4H8", "No, one is C5H12", "Yes, C3H8"],
+            answer: 0
+        },
+        {
+            q: "Why do straight-chain and branched-chain alkanes have different chain structures?",
+            options: [
+                "Due to branching of the carbon skeleton",
+                "Due to presence of hydroxyl groups",
+                "Due to cis/trans arrangement",
+                "Due to chirality"
+            ],
+            answer: 0
+        },
+        {
+            q: "Which formula represents pentane's molecular formula for chain isomer questions in the exercises?",
+            options: ["C5H10", "C5H12", "C4H10", "C6H14"],
+            answer: 1
+        },
+        {
+            q: "Which structural feature defines chain isomerism?",
+            options: [
+                "Straight versus branched carbon chains",
+                "Position of halogen atoms",
+                "Presence of ring structures",
+                "Presence of chiral centers"
+            ],
+            answer: 0
+        },
+
+        // Stereoisomerism & Geometrical (cis/trans) Isomerism
+        {
+            q: "How do stereoisomers differ from each other?",
+            options: [
+                "They have different atoms bonded to each other",
+                "They have the same atoms bonded to each other, but different arrangements in space",
+                "They have different molecular formulas",
+                "They are always cyclic"
+            ],
+            answer: 1
+        },
+        {
+            q: "What are the two main types of stereoisomerism?",
+            options: [
+                "Position and Chain isomerism",
+                "Geometrical (cis/trans) and Optical isomerism",
+                "Structural and Functional isomerism",
+                "Cis and Trans-cyclic isomerism"
+            ],
+            answer: 1
+        },
+        {
+            q: "Why does geometrical (cis/trans) isomerism occur in alkenes?",
+            options: [
+                "Because of free rotation about C=C double bonds",
+                "Because there is NO free rotation about a C=C double bond (due to the pi bond)",
+                "Because of tetrahedral carbon geometry",
+                "Because of chiral centers"
+            ],
+            answer: 1
+        },
+        {
+            q: "What does the prefix 'cis-' mean in cis-1,2-dibromoethene?",
+            options: ["Across", "Same side", "Opposite side", "Cyclic"],
+            answer: 1
+        },
+        {
+            q: "What does the prefix 'trans-' mean in trans-1,2-dibromoethene?",
+            options: ["Same side", "Across", "Ring structure", "Linear"],
+            answer: 1
+        },
+        {
+            q: "In cis-1,2-dibromoethene, where are the two Br atoms positioned relative to the C=C double bond?",
+            options: ["On opposite sides", "On the same side", "Perpendicular to the plane", "On different carbon atoms"],
+            answer: 1
+        },
+        {
+            q: "Can geometrical isomerism also occur in substituted cyclic compounds (rings)?",
+            options: [
+                "No, only in alkenes",
+                "Yes, because of limited rotation about C-C single bonds that make up the rings",
+                "Only in aromatic rings",
+                "Only when a double bond is inside the ring"
+            ],
+            answer: 1
+        },
+        {
+            q: "What are the two stereoisomers of cyclobutane-1,3-dicarboxylic acid called?",
+            options: ["d- and l-isomers", "cis-isomer and trans-isomer", "ortho- and para-isomers", "alpha- and beta-isomers"],
+            answer: 1
+        },
+        {
+            q: "Do geometrical isomers have identical physical properties?",
+            options: [
+                "Yes, identical physical and chemical properties",
+                "No, they have different physical properties (and sometimes different chemical reaction rates)",
+                "Only their boiling points are identical",
+                "Only their melting points are identical"
+            ],
+            answer: 1
+        },
+        {
+            q: "What type of bond restricts rotation in alkenes, leading to geometrical isomerism?",
+            options: ["Sigma bond", "Pi (π) bond", "Hydrogen bond", "Ionic bond"],
+            answer: 1
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let selectedOption = null;
+    let isAnswered = false;
+
+    const questionNumberEl = document.getElementById('question-number');
+    const scoreTrackerEl = document.getElementById('score-tracker');
+    const progressBarEl = document.getElementById('progress-bar');
+    const questionTextEl = document.getElementById('question-text');
+    const optionsListEl = document.getElementById('options-list');
+    const nextBtn = document.getElementById('next-btn');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultsScreen = document.getElementById('results-screen');
+    const finalScoreEl = document.getElementById('final-score');
+    const performanceMsgEl = document.getElementById('performance-msg');
+
+    function loadQuestion() {
+        isAnswered = false;
+        selectedOption = null;
+        nextBtn.disabled = true;
+
+        const q = questions[currentQuestion];
+        questionNumberEl.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+        scoreTrackerEl.textContent = `Score: ${score}`;
+        progressBarEl.style.width = `${((currentQuestion) / questions.length) * 100}%`;
+        questionTextEl.textContent = q.q;
+
+        optionsListEl.innerHTML = '';
+        q.options.forEach((opt, index) => {
+            const li = document.createElement('li');
+            li.className = 'option-item';
+            li.textContent = opt;
+            li.onclick = () => selectOption(index, li);
+            optionsListEl.appendChild(li);
+        });
+    }
+
+    function selectOption(index, element) {
+        if (isAnswered) return;
+        
+        document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedOption = index;
+        nextBtn.disabled = false;
+    }
+
+    nextBtn.onclick = function() {
+        if (selectedOption === null) return;
+
+        isAnswered = true;
+        const q = questions[currentQuestion];
+        const optionItems = document.querySelectorAll('.option-item');
+
+        if (selectedOption === q.answer) {
+            score++;
+            optionItems[selectedOption].classList.add('correct');
+        } else {
+            optionItems[selectedOption].classList.add('incorrect');
+            optionItems[q.answer].classList.add('correct');
+        }
+
+        scoreTrackerEl.textContent = `Score: ${score}`;
+        nextBtn.disabled = true;
+
+        setTimeout(() => {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }, 1200);
+    };
+
+    function showResults() {
+        quizScreen.style.display = 'none';
+        resultsScreen.style.display = 'block';
+        finalScoreEl.textContent = `${score}/${questions.length}`;
+        progressBarEl.style.width = `100%`;
+
+        const percentage = (score / questions.length) * 100;
+        let msg = "";
+        if (percentage >= 90) {
+            msg = "Outstanding! You have mastered the chemistry of Isomerism!";
+        } else if (percentage >= 75) {
+            msg = "Great job! You have a solid grasp of structural and stereoisomerism.";
+        } else if (percentage >= 50) {
+            msg = "Good effort! Review the textbook notes on geometrical and optical isomerism to improve further.";
+        } else {
+            msg = "Keep practicing! Go through the textbook examples on isomerism again and retake the quiz.";
+        }
+        performanceMsgEl.textContent = msg;
+    }
+
+    function restartQuiz() {
+        currentQuestion = 0;
+        score = 0;
+        quizScreen.style.display = 'block';
+        resultsScreen.style.display = 'none';
+        loadQuestion();
+    }
+
+    // Initialize first question
+    loadQuestion();
+</script>
+
+</body>
+</html>
