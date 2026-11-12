@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 8: Databases Quiz</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #cfe8f7;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+}
+
+h2 {
+  color: #304b68;
+}
+
+.box {
+  background: white;
+  padding: 22px;
+  border-radius: 15px;
+  max-width: 550px;
+  margin: auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.clue-text {
+  font-size: 17px;
+  color: #555;
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.target-word {
+  font-size: 21px;
+  font-weight: bold;
+  color: #2c3e50;
+  background: #e8f4f8;
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  background: #fff4b3;
+  font-size: 19px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover:not(:disabled) {
+  background: #ffe18a;
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+#score {
+  font-size: 21px;
+  font-weight: bold;
+  margin: 15px;
+  color: #34495e;
+}
+
+#result {
+  font-size: 23px;
+  font-weight: bold;
+  color: #27ae60;
+  margin-top: 20px;
+}
+
+#progress {
+  background: #ffffff;
+  border-radius: 20px;
+  max-width: 550px;
+  margin: 15px auto;
+  height: 12px;
+  overflow: hidden;
+}
+
+#progressBar {
+  background: #8ed6a5;
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s;
+}
+
+.feedback {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+.restart {
+  background: #b8e0d2;
+  margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🗄️ Information Technology</h2>
+<h3>Chapter 8: Databases Mastery Challenge</h3>
+
+<div id="score">Score: 0 / 50</div>
+
+<div id="progress">
+  <div id="progressBar"></div>
+</div>
+
+<div class="box" id="quiz"></div>
+
+<div id="result"></div>
+
+<script>
+
+// 50 DATABASE QUESTIONS
+
+const questions = [
+  {
+    q: "What is the primary purpose of a database management system (DBMS)?",
+    options: ["To efficiently store, retrieve, and manage data", "To create graphical user interfaces", "To design web pages"],
+    answer: "To efficiently store, retrieve, and manage data"
+  },
+  {
+    q: "In a relational database table, what term describes a single row of data?",
+    options: ["Record", "Field", "Table"],
+    answer: "Record"
+  },
+  {
+    q: "Which term describes a single column or attribute in a database table?",
+    options: ["Field", "Record", "File"],
+    answer: "Field"
+  },
+  {
+    q: "What is the primary function of a primary key?",
+    options: ["To uniquely identify each record in a table", "To link two tables together", "To sort data alphabetically"],
+    answer: "To uniquely identify each record in a table"
+  },
+  {
+    q: "Which of the following is a key characteristic of a primary key?",
+    options: ["It cannot contain null or duplicate values", "It can be empty for optional fields", "It must change when records are updated"],
+    answer: "It cannot contain null or duplicate values"
+  },
+  {
+    q: "What is a foreign key used for in a relational database?",
+    options: ["To link to the primary key of another table", "To encrypt sensitive records", "To create backup files"],
+    answer: "To link to the primary key of another table"
+  },
+  {
+    q: "What is the main drawback of using a flat-file database compared to a relational database?",
+    options: ["Data redundancy and duplication", "Slower network connection", "Inability to store text"],
+    answer: "Data redundancy and duplication"
+  },
+  {
+    q: "Which data type is most appropriate for storing a user's telephone number?",
+    options: ["Alphanumeric / Text", "Integer", "Boolean"],
+    answer: "Alphanumeric / Text"
+  },
+  {
+    q: "What is validation in the context of database data entry?",
+    options: ["Checking if entered data meets specific rules and criteria", "Ensuring data matches the original paper document", "Encrypting records for security"],
+    answer: "Checking if entered data meets specific rules and criteria"
+  },
+  {
+    q: "What type of validation check ensures that an input field is not left empty?",
+    options: ["Presence check", "Range check", "Type check"],
+    answer: "Presence check"
+  },
+  {
+    q: "Which validation check would test whether a person's entered age is between 0 and 120?",
+    options: ["Range check", "Length check", "Format check"],
+    answer: "Range check"
+  },
+  {
+    q: "What is verification?",
+    options: ["Checking that data entered matches the original source document", "Testing data against a list of valid values", "Checking data type constraints"],
+    answer: "Checking that data entered matches the original source document"
+  },
+  {
+    q: "Which method is commonly used for data verification during data entry?",
+    options: ["Double-entry data entry", "Primary key assignment", "SQL SELECT query"],
+    answer: "Double-entry data entry"
+  },
+  {
+    q: "What is the purpose of a query in a database?",
+    options: ["To search for and retrieve specific data matching criteria", "To delete the database permanently", "To format printed reports"],
+    answer: "To search for and retrieve specific data matching criteria"
+  },
+  {
+    q: "Which SQL command is used to retrieve data from a database table?",
+    options: ["SELECT", "INSERT", "UPDATE"],
+    answer: "SELECT"
+  },
+  {
+    q: "In SQL, which clause is used to filter records based on specific criteria?",
+    options: ["WHERE", "ORDER BY", "GROUP BY"],
+    answer: "WHERE"
+  },
+  {
+    q: "What does a check digit verify?",
+    options: ["Accuracy of identification numbers such as barcodes or ISBNs", "The exact length of a text field", "Whether a password is secure"],
+    answer: "Accuracy of identification numbers such as barcodes or ISBNs"
+  },
+  {
+    q: "Why are relational databases preferred over flat-file databases for large systems?",
+    options: ["They minimize data duplication and improve data consistency", "They require less storage space overall", "They do not require a DBMS"],
+    answer: "They minimize data duplication and improve data consistency"
+  },
+  {
+    q: "What is a lookup check?",
+    options: ["Checking input against a predetermined list of valid values", "Checking if data is within upper and lower bounds", "Checking the number of characters in a string"],
+    answer: "Checking input against a predetermined list of valid values"
+  },
+  {
+    q: "Which validation check ensures that an input field contains only numeric characters?",
+    options: ["Type check", "Presence check", "Format check"],
+    answer: "Type check"
+  },
+  {
+    q: "What is a database model that organizes data into two-dimensional tables connected by keys called?",
+    options: ["Relational database", "Hierarchical database", "Network database"],
+    answer: "Relational database"
+  },
+  {
+    q: "What is a composite primary key?",
+    options: ["A primary key made by combining two or more fields", "A key that links three tables", "An automatically generated number"],
+    answer: "A primary key made by combining two or more fields"
+  },
+  {
+    q: "Why might a database designer choose a format check for a national insurance number?",
+    options: ["To ensure the entry matches a specific pattern of letters and digits", "To ensure the field is not empty", "To check if the number is within a numeric range"],
+    answer: "To ensure the entry matches a specific pattern of letters and digits"
+  },
+  {
+    q: "What is data consistency in a database?",
+    options: ["Ensuring data is accurate, uniform, and free of contradictions", "Ensuring data loads instantly", "Ensuring data is backed up daily"],
+    answer: "Ensuring data is accurate, uniform, and free of contradictions"
+  },
+  {
+    q: "In SQL, which keyword is used to sort query results in ascending or descending order?",
+    options: ["ORDER BY", "SORT BY", "GROUP BY"],
+    answer: "ORDER BY"
+  },
+  {
+    q: "What is an update anomaly in a database?",
+    options: ["Inconsistency caused by failing to update duplicated data across all records", "A syntax error in an SQL query", "A corrupted primary key"],
+    answer: "Inconsistency caused by failing to update duplicated data across all records"
+  },
+  {
+    q: "Which tool provides a user-friendly graphical interface for entering and viewing database records?",
+    options: ["Form", "Report", "Query"],
+    answer: "Form"
+  },
+  {
+    q: "What is the main purpose of a database report?",
+    options: ["To present formatted and summarized information for printing or review", "To enter new records into tables", "To validate user inputs"],
+    answer: "To present formatted and summarized information for printing or review"
+  },
+  {
+    q: "Which of the following describes a many-to-many relationship in a database?",
+    options: ["Multiple records in table A relate to multiple records in table B", "One record in table A relates to one record in table B", "One record in table A relates to multiple records in table B"],
+    answer: "Multiple records in table A relate to multiple records in table B"
+  },
+  {
+    q: "What is an intersection table (or linking table) used for in relational database design?",
+    options: ["To resolve a many-to-many relationship into two one-to-many relationships", "To combine two identical tables", "To store passwords"],
+    answer: "To resolve a many-to-many relationship into two one-to-many relationships"
+  },
+  {
+    q: "What is a deletion anomaly?",
+    options: ["Losing unintended information when a record is deleted from a flat-file or poorly designed table", "Deleting the entire database accidentally", "Removing a primary key"],
+    answer: "Losing unintended information when a record is deleted from a flat-file or poorly designed table"
+  },
+  {
+    q: "What is an insertion anomaly?",
+    options: ["Inability to add data without having to add unrelated mandatory data", "Inserting duplicate primary keys", "Adding a new column to a table"],
+    answer: "Inability to add data without having to add unrelated mandatory data"
+  },
+  {
+    q: "Which SQL command is used to add new records to a table?",
+    options: ["INSERT INTO", "ADD RECORD", "UPDATE"],
+    answer: "INSERT INTO"
+  },
+  {
+    q: "Which SQL command is used to modify existing records in a table?",
+    options: ["UPDATE", "MODIFY", "CHANGE"],
+    answer: "UPDATE"
+  },
+  {
+    q: "Which SQL command is used to remove records from a table?",
+    options: ["DELETE FROM", "REMOVE", "DROP"],
+    answer: "DELETE FROM"
+  },
+  {
+    q: "What is normalization in database design?",
+    options: ["The process of structuring a database to reduce data redundancy and improve integrity", "The process of backing up files", "The process of converting text to uppercase"],
+    answer: "The process of structuring a database to reduce data redundancy and improve integrity"
+  },
+  {
+    q: "What is First Normal Form (1NF)?",
+    options: ["A table where every cell contains a single atomic value and no repeating groups", "A table with no foreign keys", "A table with encrypted columns"],
+    answer: "A table where every cell contains a single atomic value and no repeating groups"
+  },
+  {
+    q: "What is Second Normal Form (2NF)?",
+    options: ["It is in 1NF and all non-key attributes are fully dependent on the primary key", "It has no primary key", "It contains duplicate rows"],
+    answer: "It is in 1NF and all non-key attributes are fully dependent on the primary key"
+  },
+  {
+    q: "What is Third Normal Form (3NF)?",
+    options: ["It is in 2NF and has no transitive dependencies", "It has three tables", "It has three foreign keys"],
+    answer: "It is in 2NF and has no transitive dependencies"
+  },
+  {
+    q: "What is a transitive dependency?",
+    options: ["When a non-key attribute depends on another non-key attribute rather than directly on the primary key", "When a primary key depends on a foreign key", "When a table has no records"],
+    answer: "When a non-key attribute depends on another non-key attribute rather than directly on the primary key"
+  },
+  {
+    q: "What is a data dictionary?",
+    options: ["Metadata that describes the structure, data types, and constraints of a database", "A dictionary used for spelling checks in text fields", "A list of all SQL keywords"],
+    answer: "Metadata that describes the structure, data types, and constraints of a database"
+  },
+  {
+    q: "What is metadata?",
+    options: ["Data about data", "Secondary data backups", "Encrypted data passwords"],
+    answer: "Data about data"
+  },
+  {
+    q: "What is a Boolean data type used for?",
+    options: ["Storing true/false or yes/no values", "Storing large blocks of text", "Storing monetary values with decimals"],
+    answer: "Storing true/false or yes/no values"
+  },
+  {
+    q: "What is a length check used for?",
+    options: ["Ensuring data has a specific number of characters", "Checking if a number is positive", "Ensuring a field is not blank"],
+    answer: "Ensuring data has a specific number of characters"
+  },
+  {
+    q: "What is a character check (or alpha check)?",
+    options: ["Ensuring input contains only alphabetic letters", "Ensuring input contains numbers only", "Checking email format"],
+    answer: "Ensuring input contains only alphabetic letters"
+  },
+  {
+    q: "What is visual verification?",
+    options: ["Comparing data on a screen against the original paper document by eye", "Using a double-entry typing system", "Using a check digit algorithm"],
+    answer: "Comparing data on a screen against the original paper document by eye"
+  },
+  {
+    q: "In a relational database, what does a one-to-many relationship mean?",
+    options: ["One record in table A is related to multiple records in table B", "Every record in table A relates to every record in table B", "Only one record exists in the entire database"],
+    answer: "One record in table A is related to multiple records in table B"
+  },
+  {
+    q: "What is a flat-file database?",
+    options: ["A database stored as a single table or spreadsheet-like file without tables linked by keys", "A database that has been normalized", "A database stored in the cloud"],
+    answer: "A database stored as a single table or spreadsheet-like file without tables linked by keys"
+  },
+  {
+    q: "What is a database index?",
+    options: ["A data structure that improves the speed of data retrieval operations on a table", "An index page at the beginning of a database report", "A list of all database users"],
+    answer: "A data structure that improves the speed of data retrieval operations on a table"
+  },
+  {
+    q: "Why is data integrity important in a database?",
+    options: ["To ensure data is accurate, valid, and reliable for decision-making", "To make database files smaller in size", "To speed up internet browsing"],
+    answer: "To ensure data is accurate, valid, and reliable for decision-making"
+  }
+];
+
+
+// QUIZ VARIABLES
+
+let current = 0;
+let score = 0;
+let currentOptions = [];
+let answered = false;
+
+
+// SOUND EFFECTS - NO EXTERNAL FILES REQUIRED
+
+let audioContext;
+
+function playSound(type) {
+  try {
+    audioContext = audioContext || new
+      (window.AudioContext || window.webkitAudioContext)();
+
+    if (audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    if (type === "correct") {
+      oscillator.frequency.value = 850;
+      oscillator.type = "sine";
+    }
+    else if (type === "wrong") {
+      oscillator.frequency.value = 180;
+      oscillator.type = "triangle";
+    }
+    else {
+      oscillator.frequency.value = 500;
+      oscillator.type = "sine";
+    }
+
+    gain.gain.setValueAtTime(0.15, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(
+      0.001, audioContext.currentTime + 0.25
+    );
+
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.25);
+
+  } catch(e) {}
+}
+
+
+// SHUFFLE OPTIONS
+
+function shuffle(array) {
+  let arr = [...array];
+
+  for (let i = arr.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+
+  return arr;
+}
+
+
+// LOAD QUESTION
+
+function loadQuestion() {
+
+  answered = false;
+
+  if (current >= questions.length) {
+    showFinalResult();
+    return;
+  }
+
+  let q = questions[current];
+
+  currentOptions = shuffle(q.options);
+
+  let html = `
+    <div class="clue-text">
+      Question ${current + 1} of ${questions.length}
+    </div>
+
+    <div class="target-word">
+      ${q.q}
+    </div>
+  `;
+
+  currentOptions.forEach((option, index) => {
+    html += `
+      <button onclick="checkAnswer(${index})">
+        ${option}
+      </button>
+    `;
+  });
+
+  html += `<div class="feedback" id="feedback"></div>`;
+
+  document.getElementById("quiz").innerHTML = html;
+
+  document.getElementById("progressBar").style.width =
+    (current / questions.length * 100) + "%";
+}
+
+
+// CHECK ANSWER
+
+function checkAnswer(selectedIndex) {
+
+  if (answered) return;
+
+  answered = true;
+
+  playSound("click");
+
+  const correctAnswer = questions[current].answer;
+  const selectedAnswer = currentOptions[selectedIndex];
+
+  const buttons = document.querySelectorAll("#quiz button");
+
+  buttons.forEach((btn, index) => {
+
+    btn.disabled = true;
+
+    if (currentOptions[index] === correctAnswer) {
+      btn.style.background = "#a8e6a3";
+    }
+
+    if (index === selectedIndex &&
+        selectedAnswer !== correctAnswer) {
+      btn.style.background = "#ffb3b3";
+    }
+
+  });
+
+  const feedback = document.getElementById("feedback");
+
+  if (selectedAnswer === correctAnswer) {
+
+    score++;
+
+    feedback.innerHTML = "🎉 Correct! Well done!";
+    feedback.style.color = "#218838";
+
+    playSound("correct");
+
+  } else {
+
+    feedback.innerHTML = "❌ Incorrect! Try the next one!";
+    feedback.style.color = "#d63031";
+
+    playSound("wrong");
+
+  }
+
+  document.getElementById("score").innerText =
+    "Score: " + score + " / " + questions.length;
+
+  document.getElementById("progressBar").style.width =
+    ((current + 1) / questions.length * 100) + "%";
+
+  setTimeout(() => {
+    current++;
+    loadQuestion();
+  }, 1500);
+
+}
+
+
+// FINAL RESULT PAGE
+
+function showFinalResult() {
+
+  document.getElementById("quiz").innerHTML = "";
+
+  document.getElementById("progressBar").style.width = "100%";
+
+  let percentage = Math.round(
+    (score / questions.length) * 100
+  );
+
+  let message = "";
+
+  if (percentage >= 90) {
+    message = "🏆 Excellent! You are a Database Champion!";
+  }
+  else if (percentage >= 70) {
+    message = "🌟 Very Good! Keep practising!";
+  }
+  else if (percentage >= 50) {
+    message = "👏 Good effort! You are improving!";
+  }
+  else {
+    message = "💪 Keep practising. You can do it!";
+  }
+
+  document.getElementById("result").innerHTML = `
+    <div class="box">
+      <h2>🎉 Quiz Completed!</h2>
+
+      <h1>${score} / ${questions.length}</h1>
+
+      <h3>${percentage}%</h3>
+
+      <p>${message}</p>
+
+      <button class="restart" onclick="restartQuiz()">
+        🔄 Play Again
+      </button>
+    </div>
+  `;
+
+}
+
+
+// RESTART QUIZ
+
+function restartQuiz() {
+
+  current = 0;
+  score = 0;
+
+  document.getElementById("score").innerText =
+    "Score: 0 / " + questions.length;
+
+  document.getElementById("result").innerHTML = "";
+
+  loadQuestion();
+
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
